@@ -100,6 +100,8 @@ WebContainer {
     fullscreenMode: (contentItem && contentItem.chromeGestureEnabled && !contentItem.chrome) || webView.inputPanelVisible || !webView.foreground || (contentItem && contentItem.fullscreen) || firstUseFullscreen
     _readyToLoad: contentItem && contentItem.viewReady && tabModel.loaded
 
+    on_ReadyToLoadChanged: console.log("WebView ready to load:", _readyToLoad)
+
     favicon: contentItem ? contentItem.favicon : ""
 
     webPageComponent: webPageComponent
@@ -222,6 +224,7 @@ WebContainer {
                 loadFrameScript("chrome://embedlite/content/embedhelper.js")
 
                 viewReady = true
+                console.log("Page ready to load:", tabId)
             }
 
             onDraggingChanged: {

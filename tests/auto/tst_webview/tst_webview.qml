@@ -28,9 +28,33 @@ ApplicationWindow {
         WebView {
             id: webView
 
+            property real pageWidth: contentItem ? contentItem.width : -1
+            property real pageHeight: contentItem ? contentItem.height : -1
+
             active: true
-            toolbarHeight: 50
+            toolbarHeight: 0
+            fullscreenHeight: height
             portrait: true
+            width: parent.width
+            height: parent.height
+
+            onLoadProgressChanged: console.log("progress:", loadProgress, url, tabId)
+            onLoadingChanged: console.log(loading, url, tabId)
+            onUrlChanged: console.log(url, tabId)
+            onContentItemChanged: {
+                var url = "no url"
+                var tabId = -1
+                if (contentItem) {
+                    url = contentItem.url
+                    tabId = contentItem.tabId
+                }
+
+                console.log(contentItem, "url:", url, "tabId:", tabId)
+            }
+            onWidthChanged: console.log("Container width:", width)
+            onHeightChanged: console.log("Container width:", height)
+            onPageHeightChanged: console.log("Web page height:", pageHeight)
+            onPageWidthChanged: console.log("Web page height:", pageWidth)
 
             HistoryModel {
                 id: historyModel
@@ -40,4 +64,3 @@ ApplicationWindow {
 
     cover: undefined
 }
-
