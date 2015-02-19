@@ -14,7 +14,7 @@ import Sailfish.Silica 1.0
 import Sailfish.Browser 1.0
 import "." as Browser
 
-PanelBackground {
+Rectangle {
     id: overlay
 
     property bool active
@@ -95,10 +95,11 @@ PanelBackground {
         }
     }
 
-    gradient: Gradient {
-        GradientStop { position: 0.0; color: Theme.rgba(Theme.highlightBackgroundColor, 0.3) }
-        GradientStop { position: 1.0; color: Theme.rgba(Theme.highlightBackgroundColor, 0.0) }
-    }
+    color: "black"
+//    gradient: Gradient {
+//        GradientStop { position: 0.0; color: Theme.rgba(Theme.highlightBackgroundColor, 0.3) }
+//        GradientStop { position: 1.0; color: Theme.rgba(Theme.highlightBackgroundColor, 0.0) }
+//    }
 
     // Immediately active WebView height binding when dragging
     // starts. If this binding is removed, state change to
@@ -153,10 +154,10 @@ PanelBackground {
         }
     }
 
-    Image {
-        anchors.fill: parent
-        source: "image://theme/graphic-gradient-edge"
-    }
+//    Image {
+//        anchors.fill: parent
+//        source: "image://theme/graphic-gradient-edge"
+//    }
 
     Browser.ProgressBar {
         id: progressBar
@@ -375,7 +376,6 @@ PanelBackground {
                 id: favoriteGrid
 
                 height: historyList.height
-                anchors.horizontalCenter: parent.horizontalCenter
                 opacity: historyContainer.showFavorites ? 1.0 : 0.0
                 enabled: overlayAnimator.atTop
                 visible: !overlayAnimator.atBottom && !toolBar.findInPageActive && opacity > 0.0

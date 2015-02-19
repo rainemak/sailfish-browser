@@ -180,7 +180,7 @@ void DeclarativeWebUtils::updateWebEngineSettings()
     mozContext->setPref(QString("apz.fling_stopped_threshold"), QString("0.13f"));
 
     // Don't force 16bit color depth
-    mozContext->setPref(QString("gfx.qt.rgb16.force"), QVariant(false));
+    mozContext->setPref(QString("gfx.qt.rgb16.force"), QVariant(true));
 
     mozContext->setPref(QString("media.resource_handler_disabled"), QVariant(true));
 

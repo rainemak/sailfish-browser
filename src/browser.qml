@@ -15,30 +15,40 @@ import Sailfish.Silica 1.0
 import Sailfish.Browser 1.0
 import "pages"
 
-ApplicationWindow {
+BrowserPage {
     id: window
 
     signal newTab
 
-    function setBrowserCover(model) {
-        if (model && model.count === 0) {
-            cover = Qt.resolvedUrl("cover/NoTabsCover.qml")
-        } else {
-            cover = null
-        }
-    }
+    width: Screen.width
+    height: Screen.height
 
-    allowedOrientations: WebUtils.firstUseDone && Qt.application.active ? defaultAllowedOrientations : Orientation.Portrait
-    _defaultPageOrientations: Orientation.All
-    cover: null
-    initialPage: Component {
-        BrowserPage {
-            id: browserPage
+//    function setBrowserCover(model) {
+//        if (model && model.count === 0) {
+//            cover = Qt.resolvedUrl("cover/NoTabsCover.qml")
+//        } else {
+//            cover = null
+//        }
+//    }
 
-            Connections {
-                target: window
-                onNewTab: browserPage.activateNewTabView()
-            }
-        }
-    }
+//    width: Screen.width
+//    height: Screen.height
+
+//    BrowserPage {
+
+//    }
+
+//    allowedOrientations: WebUtils.firstUseDone && Qt.application.active ? defaultAllowedOrientations : Orientation.Portrait
+//    _defaultPageOrientations: Orientation.All
+//    cover: null
+//    initialPage: Component {
+//        BrowserPage {
+//            id: browserPage
+
+//            Connections {
+//                target: window
+//                onNewTab: browserPage.activateNewTabView()
+//            }
+//        }
+//    }
 }

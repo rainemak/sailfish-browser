@@ -13,7 +13,7 @@ import QtQuick 2.1
 import Sailfish.Silica 1.0
 import Sailfish.Browser 1.0
 import Qt5Mozilla 1.0
-import "WebPopupHandler.js" as PopupHandler
+//import "WebPopupHandler.js" as PopupHandler
 import "." as Browser
 
 WebContainer {
@@ -48,8 +48,8 @@ WebContainer {
     height: portrait ? Screen.height : Screen.width
     foreground: Qt.application.active
     allowHiding: !resourceController.videoActive && !resourceController.audioActive
-    inputPanelHeight: window.pageStack.panelSize
-    inputPanelOpenHeight: window.pageStack.imSize
+//    inputPanelHeight: window.pageStack.panelSize
+//    inputPanelOpenHeight: window.pageStack.imSize
     fullscreenMode: (contentItem && contentItem.chromeGestureEnabled && !contentItem.chrome) ||
                     (contentItem && contentItem.fullscreen)
 
@@ -61,7 +61,7 @@ WebContainer {
         id: tabs
     }
 
-    visible: WebUtils.firstUseDone
+    visible: WebUtils.firstUseDone || true
 
     WebViewCreator {
         activeWebView: contentItem
@@ -69,12 +69,12 @@ WebContainer {
         onNewWindowRequested: tabModel.newTab(url, "", parentId)
     }
 
-    Rectangle {
-        id: background
-        anchors.fill: parent
-        visible: foreground || contentItem
-        color: contentItem && contentItem.bgcolor ? contentItem.bgcolor : "white"
-    }
+//    Rectangle {
+//        id: background
+//        anchors.fill: parent
+//        visible: foreground || contentItem
+//        color: contentItem && contentItem.bgcolor ? contentItem.bgcolor : "white"
+//    }
 
     Component {
         id: webPageComponent
@@ -118,13 +118,13 @@ WebContainer {
 
                 webView.findInPageHasResult = false
 
-                if (!PopupHandler.isRejectedGeolocationUrl(url)) {
-                    PopupHandler.rejectedGeolocationUrl = ""
-                }
+//                if (!PopupHandler.isRejectedGeolocationUrl(url)) {
+//                    PopupHandler.rejectedGeolocationUrl = ""
+//                }
 
-                if (!PopupHandler.isAcceptedGeolocationUrl(url)) {
-                    PopupHandler.acceptedGeolocationUrl = ""
-                }
+//                if (!PopupHandler.isAcceptedGeolocationUrl(url)) {
+//                    PopupHandler.acceptedGeolocationUrl = ""
+//                }
             }
 
             onBgcolorChanged: {
@@ -223,42 +223,42 @@ WebContainer {
                     }
                     break
                 }
-                case "embed:filepicker": {
-                    PopupHandler.openFilePicker(data)
-                    break
-                }
-                case "embed:selectasync": {
-                    PopupHandler.openSelectDialog(data)
-                    break;
-                }
-                case "embed:alert": {
-                    PopupHandler.openAlert(data)
-                    break
-                }
-                case "embed:confirm": {
-                    PopupHandler.openConfirm(data)
-                    break
-                }
-                case "embed:prompt": {
-                    PopupHandler.openPrompt(data)
-                    break
-                }
-                case "embed:auth": {
-                    PopupHandler.openAuthDialog(data)
-                    break
-                }
-                case "embed:permissions": {
-                    PopupHandler.openLocationDialog(data)
-                    break
-                }
-                case "embed:login": {
-                    PopupHandler.openPasswordManagerDialog(data)
-                    break
-                }
-                case "Content:ContextMenu": {
-                    PopupHandler.openContextMenu(data)
-                    break
-                }
+//                case "embed:filepicker": {
+//                    PopupHandler.openFilePicker(data)
+//                    break
+//                }
+//                case "embed:selectasync": {
+//                    PopupHandler.openSelectDialog(data)
+//                    break;
+//                }
+//                case "embed:alert": {
+//                    PopupHandler.openAlert(data)
+//                    break
+//                }
+//                case "embed:confirm": {
+//                    PopupHandler.openConfirm(data)
+//                    break
+//                }
+//                case "embed:prompt": {
+//                    PopupHandler.openPrompt(data)
+//                    break
+//                }
+//                case "embed:auth": {
+//                    PopupHandler.openAuthDialog(data)
+//                    break
+//                }
+//                case "embed:permissions": {
+//                    PopupHandler.openLocationDialog(data)
+//                    break
+//                }
+//                case "embed:login": {
+//                    PopupHandler.openPasswordManagerDialog(data)
+//                    break
+//                }
+//                case "Content:ContextMenu": {
+//                    PopupHandler.openContextMenu(data)
+//                    break
+//                }
                 case "Content:SelectionRange": {
                     webPage.selectionRangeUpdated(data)
                     break
@@ -305,37 +305,37 @@ WebContainer {
         }
     }
 
-    Rectangle {
-        id: verticalScrollDecorator
+//    Rectangle {
+//        id: verticalScrollDecorator
 
-        width: 5
-        height: contentItem ? contentItem.verticalScrollDecorator.size : 0
-        y: contentItem ? contentItem.verticalScrollDecorator.position : 0
-        z: 1
-        anchors.right: contentItem ? contentItem.right: undefined
-        color: _decoratorColor
-        smooth: true
-        radius: 2.5
-        visible: contentItem && contentItem.contentHeight > contentItem.height && !contentItem.pinching && !popupActive
-        opacity: contentItem && contentItem.verticalScrollDecorator.moving ? 1.0 : 0.0
-        Behavior on opacity { NumberAnimation { properties: "opacity"; duration: 400 } }
-    }
+//        width: 5
+//        height: contentItem ? contentItem.verticalScrollDecorator.size : 0
+//        y: contentItem ? contentItem.verticalScrollDecorator.position : 0
+//        z: 1
+//        anchors.right: contentItem ? contentItem.right: undefined
+//        color: _decoratorColor
+//        smooth: true
+//        radius: 2.5
+//        visible: contentItem && contentItem.contentHeight > contentItem.height && !contentItem.pinching && !popupActive
+//        opacity: contentItem && contentItem.verticalScrollDecorator.moving ? 1.0 : 0.0
+//        Behavior on opacity { NumberAnimation { properties: "opacity"; duration: 400 } }
+//    }
 
-    Rectangle {
-        id: horizontalScrollDecorator
+//    Rectangle {
+//        id: horizontalScrollDecorator
 
-        width: contentItem ? contentItem.horizontalScrollDecorator.size : 0
-        height: 5
-        x: contentItem ? contentItem.horizontalScrollDecorator.position : 0
-        y: webView.height - height
-        z: 1
-        color: _decoratorColor
-        smooth: true
-        radius: 2.5
-        visible: contentItem && contentItem.contentWidth > contentItem.width && !contentItem.pinching && !popupActive
-        opacity: contentItem && contentItem.horizontalScrollDecorator.moving ? 1.0 : 0.0
-        Behavior on opacity { NumberAnimation { properties: "opacity"; duration: 400 } }
-    }
+//        width: contentItem ? contentItem.horizontalScrollDecorator.size : 0
+//        height: 5
+//        x: contentItem ? contentItem.horizontalScrollDecorator.position : 0
+//        y: webView.height - height
+//        z: 1
+//        color: _decoratorColor
+//        smooth: true
+//        radius: 2.5
+//        visible: contentItem && contentItem.contentWidth > contentItem.width && !contentItem.pinching && !popupActive
+//        opacity: contentItem && contentItem.horizontalScrollDecorator.moving ? 1.0 : 0.0
+//        Behavior on opacity { NumberAnimation { properties: "opacity"; duration: 400 } }
+//    }
 
     ResourceController {
         id: resourceController
@@ -349,18 +349,18 @@ WebContainer {
         interval: 1000
     }
 
-    Component {
-        id: pickerCreator
-        PickerCreator {}
-    }
+//    Component {
+//        id: pickerCreator
+//        PickerCreator {}
+//    }
 
-    Component.onCompleted: {
-        PopupHandler.auxTimer = auxTimer
-        PopupHandler.pageStack = pageStack
-        PopupHandler.webView = webView
-        PopupHandler.resourceController = resourceController
-        PopupHandler.WebUtils = WebUtils
-        PopupHandler.tabModel = tabModel
-        PopupHandler.pickerCreator = pickerCreator
-    }
+//    Component.onCompleted: {
+//        PopupHandler.auxTimer = auxTimer
+//        PopupHandler.pageStack = pageStack
+//        PopupHandler.webView = webView
+//        PopupHandler.resourceController = resourceController
+//        PopupHandler.WebUtils = WebUtils
+//        PopupHandler.tabModel = tabModel
+//        PopupHandler.pickerCreator = pickerCreator
+//    }
 }

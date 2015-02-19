@@ -17,7 +17,7 @@ import Sailfish.Browser 1.0
 import "components" as Browser
 
 
-Page {
+Rectangle {
     id: browserPage
 
     property Item firstUseOverlay
@@ -36,74 +36,77 @@ Page {
     }
 
     function bringToForeground() {
-        if (!window.applicationActive) {
-            window.activate()
-        }
+//        if (!window.applicationActive) {
+//            window.activate()
+//        }
     }
 
     function activateNewTabView() {
-        pageStack.pop(browserPage, PageStackAction.Immediate);
-        overlay.enterNewTabUrl(PageStackAction.Immediate)
-        bringToForeground()
+//        pageStack.pop(browserPage, PageStackAction.Immediate);
+//        overlay.enterNewTabUrl(PageStackAction.Immediate)
+//        bringToForeground()
     }
+
+
+    color: "black"
 
     // Safety clipping. There is clipping in ApplicationWindow that should react upon focus changes.
     // This clipping can handle also clipping of QmlMozView. When this page is active we do not need to clip
     // if input method is not visible.
-    clip: status != PageStatus.Active || webView.inputPanelVisible
+//    clip: status != PageStatus.Active || webView.inputPanelVisible
 
-    orientationTransitions: Transition {
-        to: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
-        from: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
-        SequentialAnimation {
-            PropertyAction {
-                target: browserPage
-                property: 'orientationTransitionRunning'
-                value: true
-            }
-            ParallelAnimation {
-                FadeAnimation {
-                    target: webView.contentItem
-                    to: 0
-                    duration: 150
-                }
-                FadeAnimation {
-                    target: !webView.fullscreenMode ? overlay : null
-                    to: 0
-                    duration: 150
-                }
-            }
-            PropertyAction {
-                target: browserPage
-                properties: 'width,height,rotation,orientation'
-            }
-            ScriptAction {
-                script: {
-                    // Restores the Bindings to width, height and rotation
-                    _defaultTransition = false
-                    webView.resetHeight()
-                    _defaultTransition = true
-                }
-            }
-            FadeAnimation {
-                target: !webView.fullscreenMode ? overlay : null
-                to: 1
-                duration: 150
-            }
-            // End-2-end implementation for OnUpdateDisplayPort should
-            // give better solution and reduce visible relayoutting.
-            FadeAnimation {
-                target: webView.contentItem
-                to: 1
-                duration: 850
-            }
-            PropertyAction {
-                target: browserPage
-                property: 'orientationTransitionRunning'
-                value: false
-            }
-        }
-    }
+//    orientationTransitions: Transition {
+//        to: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
+//        from: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
+//        SequentialAnimation {
+//            PropertyAction {
+//                target: browserPage
+//                property: 'orientationTransitionRunning'
+//                value: true
+//            }
+//            ParallelAnimation {
+//                FadeAnimation {
+//                    target: webView.contentItem
+//                    to: 0
+//                    duration: 150
+//                }
+//                FadeAnimation {
+//                    target: !webView.fullscreenMode ? overlay : null
+//                    to: 0
+//                    duration: 150
+//                }
+//            }
+//            PropertyAction {
+//                target: browserPage
+//                properties: 'width,height,rotation,orientation'
+//            }
+//            ScriptAction {
+//                script: {
+//                    // Restores the Bindings to width, height and rotation
+//                    _defaultTransition = false
+//                    webView.resetHeight()
+//                    _defaultTransition = true
+//                }
+//            }
+//            FadeAnimation {
+//                target: !webView.fullscreenMode ? overlay : null
+//                to: 1
+//                duration: 150
+//            }
+//            // End-2-end implementation for OnUpdateDisplayPort should
+//            // give better solution and reduce visible relayoutting.
+//            FadeAnimation {
+//                target: webView.contentItem
+//                to: 1
+//                duration: 850
+//            }
+//            PropertyAction {
+//                target: browserPage
+//                property: 'orientationTransitionRunning'
+//                value: false
+//            }
+//        }
+//    }
 
     HistoryModel {
         id: historyModel
@@ -113,35 +116,37 @@ Page {
     Browser.WebView {
         id: webView
 
-        enabled: overlay.animator.allowContentUse
+        enabled: true //overlay.animator.allowContentUse
         fullscreenHeight: portrait ? Screen.height : Screen.width
         portrait: browserPage.isPortrait
         maxLiveTabCount: 3
-        toolbarHeight: overlay.toolBar.toolsHeight
-        clip: true
+        toolbarHeight: 0//overlay.toolBar.toolsHeight
+        width: 540
+        height: 960
+//        clip: true
     }
 
-    Rectangle {
-        width: webView.width
-        height: Math.ceil(webView.height)
-        opacity: 0.9 - (overlay.y / (webView.fullscreenHeight - overlay.toolBar.toolsHeight)) * 0.9
-        color: Theme.highlightDimmerColor
+//    Rectangle {
+//        width: webView.width
+//        height: Math.ceil(webView.height)
+//        opacity: 0.9 - (overlay.y / (webView.fullscreenHeight - overlay.toolBar.toolsHeight)) * 0.9
+//        color: Theme.highlightDimmerColor
 
-        MouseArea {
-            anchors.fill: parent
-            enabled: overlay.animator.atTop && (webView.tabModel.count > 0 || firstUseOverlay)
-            onClicked: overlay.dismiss()
-        }
-    }
+//        MouseArea {
+//            anchors.fill: parent
+//            enabled: overlay.animator.atTop && (webView.tabModel.count > 0 || firstUseOverlay)
+//            onClicked: overlay.dismiss()
+//        }
+//    }
 
-    Browser.Overlay {
-        id: overlay
+//    Browser.Overlay {
+//        id: overlay
 
-        active: browserPage.status == PageStatus.Active
-        webView: webView
-        historyModel: historyModel
-        browserPage: browserPage
-    }
+//        active: browserPage.status == PageStatus.Active
+//        webView: webView
+//        historyModel: historyModel
+//        browserPage: browserPage
+//    }
 
     CoverActionList {
         enabled: browserPage.status === PageStatus.Active && webView.contentItem && (Config.sailfishVersion >= 2.0)
@@ -189,15 +194,15 @@ Page {
                 firstUseOverlay.dismiss()
             }
 
-            if (browserPage.status !== PageStatus.Active) {
-                pageStack.pop(browserPage, PageStackAction.Immediate)
-            }
+//            if (browserPage.status !== PageStatus.Active) {
+//                pageStack.pop(browserPage, PageStackAction.Immediate)
+//            }
 
             webView.grabActivePage()
             if (!webView.tabModel.activateTab(url)) {
                 // Not found in tabs list, load it. A new tab will be created if no tabs exist.
                 webView.load(url)
-                overlay.animator.showChrome(true)
+//                overlay.animator.showChrome(true)
             }
             bringToForeground()
         }
@@ -239,7 +244,7 @@ Page {
         }
     }
 
-    Browser.BrowserNotification {
-        id: notification
-    }
+//    Browser.BrowserNotification {
+//        id: notification
+//    }
 }
