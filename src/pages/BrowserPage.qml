@@ -17,7 +17,7 @@ import Sailfish.Browser 1.0
 import "components" as Browser
 
 
-Rectangle {
+Item {
     id: browserPage
 
     property Item firstUseOverlay
@@ -48,7 +48,7 @@ Rectangle {
     }
 
 
-    color: "black"
+    //color: "black"
 
     // Safety clipping. There is clipping in ApplicationWindow that should react upon focus changes.
     // This clipping can handle also clipping of QmlMozView. When this page is active we do not need to clip
@@ -121,8 +121,8 @@ Rectangle {
         portrait: browserPage.isPortrait
         maxLiveTabCount: 3
         toolbarHeight: 0//overlay.toolBar.toolsHeight
-        width: 540
-        height: 960
+        width: parent.width
+        height: parent.height
 //        clip: true
     }
 
