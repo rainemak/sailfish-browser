@@ -121,8 +121,8 @@ Item {
         portrait: browserPage.isPortrait
         maxLiveTabCount: 3
         toolbarHeight: 0//overlay.toolBar.toolsHeight
-        width: parent.width
-        height: parent.height
+        width: 1536
+        height: 2048
 //        clip: true
     }
 
