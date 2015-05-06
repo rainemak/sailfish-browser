@@ -59,9 +59,12 @@ PanelBackground {
     }
 
     function enterNewTabUrl(action) {
-        if (webView.contentItem) {
-            webView.contentItem.opacity = 0.0
-        }
+        // TODO: Figure out what to do with content opacity. Remove before merging.
+        // As browser content window is the window at background we cannot really fade it away.
+        // Maybe we just need to keep opacity in 1.0 when overlay is raised regardless of the case.
+//        if (webView.contentItem) {
+//            webView.contentItem.opacity = 0.0
+//        }
 
         searchField.enteringNewTabUrl = true
         searchField.resetUrl("")
@@ -97,7 +100,7 @@ PanelBackground {
 
     color: "black"
     gradient: null
-//        Gradient {
+//    gradient: Gradient {
 //        GradientStop { position: 0.0; color: Theme.rgba(Theme.highlightBackgroundColor, 0.3) }
 //        GradientStop { position: 1.0; color: Theme.rgba(Theme.highlightBackgroundColor, 0.0) }
 //    }
@@ -425,6 +428,11 @@ PanelBackground {
                 if (activeWebPage && status == PageStatus.Active) {
                     webView.privateMode ? activeWebPage.grabThumbnail() : activeWebPage.grabToFile()
                 }
+            }
+
+            Rectangle {
+                color: "black"
+                anchors.fill: parent
             }
 
             Browser.TabView {

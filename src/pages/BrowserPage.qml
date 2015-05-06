@@ -53,6 +53,14 @@ Page {
     // if input method is not visible.
     clip: status != PageStatus.Active || webView.inputPanelVisible
 
+    onStatusChanged: {
+        if (status >= PageStatus.Activating && status <= PageStatus.Active) {
+            overlay.animator.showChrome()
+        } else {
+            overlay.animator.hide()
+        }
+    }
+
     orientationTransitions: Transition {
         to: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
         from: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
@@ -135,10 +143,10 @@ Page {
 
     InputRegion {
         window: webView.chromeWindow
-        y: webView.enabled && browserPage.active ? overlay.y : 0
+        y: webView.enabled && browserPage.active && !webView.popupActive ? overlay.y : 0
 
         width: browserPage.width
-        height: webView.enabled && browserPage.active ? browserPage.height - overlay.y : browserPage.height
+        height: webView.enabled && browserPage.active && !webView.popupActive ? browserPage.height - overlay.y : browserPage.height
     }
 
     Rectangle {
