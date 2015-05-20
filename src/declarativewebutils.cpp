@@ -227,6 +227,12 @@ void DeclarativeWebUtils::updateWebEngineSettings()
 
     // Disable SSLv3
     mozContext->setPref(QString("security.tls.version.min"), QVariant(1));
+
+    // Enable Gecko overlay scrollbars
+    mozContext->setPref(QStringLiteral("ui.useOverlayScrollbars"), QVariant(1));
+    mozContext->setPref(QStringLiteral("ui.showHideScrollbars"), QVariant(1));
+    mozContext->setPref(QStringLiteral("ui.scrollbarFadeBeginDelay"), QVariant(450));
+    mozContext->setPref(QStringLiteral("ui.scrollbarFadeDuration"), QVariant(200));
 }
 
 void DeclarativeWebUtils::setFirstUseDone(bool firstUseDone) {
