@@ -324,6 +324,18 @@ void DeclarativeWebPage::forceChrome(bool forcedChrome)
     }
 }
 
+void DeclarativeWebPage::timerEvent(QTimerEvent *te)
+{
+    if (te->timerId() == m_marginChangeThrottleTimer) {
+        killTimer(m_marginChangeThrottleTimer);
+        m_marginChangeThrottleTimer = 0;
+
+    }
+    qDebug() << contentHeight() << m_previousContentHeight;
+
+    QOpenGLWebPage::timerEvent(te);
+}
+
 void DeclarativeWebPage::grabResultReady()
 {
     QImage image = m_grabResult->image();
@@ -354,15 +366,21 @@ void DeclarativeWebPage::thumbnailReady()
 
 void DeclarativeWebPage::updateViewMargins()
 {
-    if (m_container && !m_container->foreground()) {
+    if ((m_container && !m_container->foreground()) || m_marginChangeThrottleTimer > 0) {
         return;
     }
+
+    qDebug() << "1";
 
     // Reset margins always when fullscreen mode is enabled.
     QMargins margins;
     bool chromeVisible = false;
     if (!m_fullscreen) {
         // Don't update margins while panning, flicking, or pinching.
+
+
+        qDebug() << "2:" << moving() << m_virtualKeyboardMargin << contentHeight() << m_domContentLoaded << loadProgress();
+
         if (moving() || m_virtualKeyboardMargin > 0) {
             return;
         }
@@ -373,6 +391,11 @@ void DeclarativeWebPage::updateViewMargins()
             chromeVisible = true;
         }
     }
+
+    qDebug() << "3:" << margins << chromeVisible << chromeGestureEnabled();
+
+    m_previousContentHeight = contentHeight();
+    m_marginChangeThrottleTimer = startTimer(200);
 
     forceChrome(chromeVisible);
     setMargins(margins);
