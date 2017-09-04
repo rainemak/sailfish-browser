@@ -104,9 +104,17 @@ WebContainer {
                   webView.contentItem && webView.contentItem.textSelectionActive || false
     favicon: contentItem ? contentItem.favicon : ""
 
+
+
     webPageComponent: Component {
         WebPage {
             id: webPage
+            onContentHeightChanged: {
+                //if (contentItem) {
+                //    var c = contentItem
+                console.log("forcedChrome && enabled && webView.imOpened:", forcedChrome , enabled , webView.imOpened)
+            //}
+            }
 
             property int iconSize
             property string iconType
@@ -163,12 +171,10 @@ WebContainer {
             }
 
             fullscreenHeight: container.fullscreenHeight
-            toolbarHeight: container.toolbarHeight
+            toolbarHeight: 199 // container.toolbarHeight
             throttlePainting: !foreground && !resourceController.videoActive && webView.visible || !webView.visible
             enabled: webView.enabled
-
-            // There needs to be enough content for enabling chrome gesture
-            chromeGestureThreshold: toolbarHeight / 2
+            chromeGestureThreshold: 50 // toolbarHeight / 2
             chromeGestureEnabled: !forcedChrome && enabled && !webView.imOpened
 
             onGrabResult: tabModel.updateThumbnailPath(tabId, fileName)

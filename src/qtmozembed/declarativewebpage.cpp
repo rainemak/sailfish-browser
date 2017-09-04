@@ -77,6 +77,7 @@ DeclarativeWebPage::DeclarativeWebPage(QObject *parent)
     connect(this, &DeclarativeWebPage::urlChanged, this, &DeclarativeWebPage::onUrlChanged);
     connect(this, &QOpenGLWebPage::contentHeightChanged, this, &DeclarativeWebPage::updateViewMargins);
     connect(this, &QOpenGLWebPage::loadedChanged, [this]() {
+        qDebug() << "LOADED!" << contentHeight() << moving() << loaded();
         if (loaded()) {
             updateViewMargins();
             // E.g. when loading images directly we don't necessarily get domContentLoaded message from engine.
@@ -372,6 +373,7 @@ void DeclarativeWebPage::updateViewMargins()
 {
     // Don't update margins while panning, flicking, pinching, vkb is already open, or
     // margin update is ongoing (throttling).
+
     if ((m_container && !m_container->foreground()) || m_marginChangeThrottleTimer > 0 ||
             moving() || m_virtualKeyboardMargin > 0) {
         return;
@@ -385,6 +387,7 @@ void DeclarativeWebPage::resetViewMargins()
     // Reset margins always when fullscreen mode is enabled.
     QMargins margins;
     bool chromeVisible = false;
+    qDebug() << "fullscreen" << m_fullscreen << contentHeight();
     if (!m_fullscreen) {
         qreal threshold = qMax(m_fullScreenHeight * 1.5f, (m_fullScreenHeight + (m_toolbarHeight*2)));
         if (contentHeight() < threshold) {

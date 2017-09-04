@@ -97,7 +97,7 @@ Background {
         id: overlayAnimator
 
         overlay: overlay
-        portrait: browserPage.isPortrait
+        portrait: overlay.webView.portrait
         active: Qt.application.active
         webView: overlay.webView
         // Favorite grid first row offset is negative. So, increase minumumY drag by that.
@@ -164,7 +164,7 @@ Background {
         drag.filterChildren: true
         drag.axis: Drag.YAxis
         // Favorite grid first row offset is negative. So, increase minumumY drag by that.
-        drag.minimumY: browserPage.isPortrait ? toolBar.toolsHeight : 0
+        drag.minimumY: webView.portrait ? toolBar.toolsHeight : 0
         drag.maximumY: webView.fullscreenHeight - toolBar.toolsHeight
 
         drag.onActiveChanged: {
