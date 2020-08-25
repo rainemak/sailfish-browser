@@ -59,7 +59,22 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 #endif
     app->setQuitOnLastWindowClosed(false);
 
-    BrowserService *service = new BrowserService(app.data());
+    QString profileName = "mozembed";
+    bool captivePortalMode = false;
+
+    if (app->arguments().contains("-captiveportal")) {
+        captivePortalMode = true;
+        profileName = "captiveportal";
+    }
+
+    if (app->arguments().contains("-profile")) {
+        int index = app->arguments().indexOf("-profile");
+        if (index + 1 < app->arguments().size()) {
+            profileName = app->arguments().at(index + 1);
+        }
+    }
+
+    BrowserService *service = new BrowserService(app.data(), captivePortalMode);
     // Handle command line launch
     if (!service->registered()) {
 
@@ -93,7 +108,9 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
         return 0;
     }
 
-    BrowserUIService *uiService = new BrowserUIService(app.data());
+    BrowserUIService *uiService = nullptr;
+    if (!captivePortalMode)
+        uiService = new BrowserUIService(app.data());
 
     QString translationPath("/usr/share/translations/");
     QTranslator engineeringEnglish;
@@ -107,7 +124,10 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     //% "Browser"
     view->setTitle(qtTrId("sailfish-browser-ap-name"));
 
-    app->setApplicationName(QString("sailfish-browser"));
+    if (captivePortalMode)
+        app->setApplicationName(QString("sailfish-browser-captiveportal"));
+    else
+        app->setApplicationName(QString("sailfish-browser"));
     app->setOrganizationName(QString("org.sailfishos"));
 
     const char *uri = "Sailfish.Browser";
@@ -129,7 +149,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     qmlRegisterType<IconFetcher>(uri, 1, 0, "IconFetcher");
     qmlRegisterType<InputRegion>(uri, 1, 0, "InputRegion");
 
-    Browser *browser = new Browser(view.data(), app.data());
+    Browser *browser = new Browser(view.data(), app.data(), profileName);
     browser->connect(service, &BrowserService::openUrlRequested,
                      browser, &Browser::openUrl);
     browser->connect(service, &BrowserService::activateNewTabViewRequested,
@@ -137,12 +157,15 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     browser->connect(service, &BrowserService::dumpMemoryInfoRequested,
                      browser, &Browser::dumpMemoryInfo);
 
-    browser->connect(uiService, &BrowserUIService::openUrlRequested,
-                     browser, &Browser::openUrl);
-    browser->connect(uiService, &BrowserUIService::activateNewTabViewRequested,
-                     browser, &Browser::openNewTabView);
-    browser->connect(uiService, &BrowserUIService::showChrome,
-                     browser, &Browser::showChrome);
+    if (uiService)
+    {
+        browser->connect(uiService, &BrowserUIService::openUrlRequested,
+                        browser, &Browser::openUrl);
+        browser->connect(uiService, &BrowserUIService::activateNewTabViewRequested,
+                        browser, &Browser::openNewTabView);
+        browser->connect(uiService, &BrowserUIService::showChrome,
+                        browser, &Browser::showChrome);
+    }
 
     browser->connect(service, &BrowserService::cancelTransferRequested,
                      browser, &Browser::cancelDownload);

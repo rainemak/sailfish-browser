@@ -22,7 +22,7 @@ class Browser : public QObject
     Q_OBJECT
 
 public:
-    explicit Browser(QQuickView *view, QObject *parent = nullptr);
+    explicit Browser(QQuickView *view, QObject *parent = nullptr, QString profileName = "mozembed");
 
     void load();
 

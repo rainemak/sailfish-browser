@@ -22,7 +22,7 @@ class BrowserService : public QObject, protected QDBusContext
 {
     Q_OBJECT
 public:
-    BrowserService(QObject * parent);
+    BrowserService(QObject * parent, bool captivePortalMode = false);
     bool registered() const;
     QString serviceName() const;
 
@@ -48,6 +48,7 @@ private:
     bool isPrivileged() const;
 
     bool m_registered;
+    bool m_captivePortalMode;
 };
 
 class BrowserUIService : public QObject, protected QDBusContext

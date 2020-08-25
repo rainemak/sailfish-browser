@@ -31,7 +31,7 @@ BrowserPrivate::BrowserPrivate(QQuickView *view)
 {
 }
 
-Browser::Browser(QQuickView *view, QObject *parent)
+Browser::Browser(QQuickView *view, QObject *parent, QString profileName)
     : QObject(parent)
     , d_ptr(new BrowserPrivate(view))
 {
@@ -40,7 +40,7 @@ Browser::Browser(QQuickView *view, QObject *parent)
     Q_ASSERT(view);
     Q_ASSERT(qGuiApp);
 
-    SailfishOS::WebEngine::initialize("mozembed");
+    SailfishOS::WebEngine::initialize(profileName);
     SailfishOS::WebEngineSettings::initialize();
 
     DeclarativeWebUtils *utils = DeclarativeWebUtils::instance();
