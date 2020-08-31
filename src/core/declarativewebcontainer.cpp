@@ -62,6 +62,7 @@ DeclarativeWebContainer::DeclarativeWebContainer(QWindow *parent)
     , m_completed(false)
     , m_initialized(false)
     , m_privateMode(m_settingManager->autostartPrivateBrowsing())
+    , m_captivePortalMode(false)
     , m_activeTabRendered(false)
     , m_clearSurfaceTask(0)
     , m_closing(false)
@@ -84,6 +85,9 @@ DeclarativeWebContainer::DeclarativeWebContainer(QWindow *parent)
 
     if (!browserEnabled()) m_privateMode = true;
 
+    if (QCoreApplication::arguments().contains("-captiveportal"))
+        m_captivePortalMode = true;
+
     WebPageFactory* pageFactory = new WebPageFactory(this);
     connect(this, &DeclarativeWebContainer::webPageComponentChanged,
             pageFactory, &WebPageFactory::updateQmlComponent);
@@ -92,7 +96,7 @@ DeclarativeWebContainer::DeclarativeWebContainer(QWindow *parent)
     m_persistentTabModel = new PersistentTabModel(maxTabid + 1, this);
     m_privateTabModel = new PrivateTabModel(maxTabid + 1001, this);
 
-    setTabModel(privateMode() ? m_privateTabModel.data() : m_persistentTabModel.data());
+    setTabModel((m_privateMode || m_captivePortalMode) ? m_privateTabModel.data() : m_persistentTabModel.data());
 
     connect(DownloadManager::instance(), &DownloadManager::downloadStarted,
             this, &DeclarativeWebContainer::onDownloadStarted);
@@ -535,7 +539,7 @@ int DeclarativeWebContainer::findParentTabId(int tabId) const
 
 void DeclarativeWebContainer::updateMode()
 {
-    setTabModel(privateMode() ? m_privateTabModel.data() : m_persistentTabModel.data());
+    setTabModel((m_privateMode || m_captivePortalMode) ? m_privateTabModel.data() : m_persistentTabModel.data());
     emit tabIdChanged();
 
     // Reload active tab from new mode

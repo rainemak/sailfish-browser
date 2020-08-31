@@ -285,6 +285,7 @@ private:
     bool m_initialized;
 
     bool m_privateMode;
+    bool m_captivePortalMode;
     bool m_activeTabRendered;
 
     QMutex m_clearSurfaceTaskMutex;
