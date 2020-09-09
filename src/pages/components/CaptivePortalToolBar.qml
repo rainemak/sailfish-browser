@@ -17,15 +17,10 @@ Column {
 
     property string url
     property string findText
-    property real secondaryToolsHeight
-    property bool secondaryToolsActive
-    property bool findInPageActive
     property real certOverlayHeight
     property bool certOverlayActive
     property real certOverlayAnimPos
     property real certOverlayPreferedHeight: 4 * toolBarRow.height
-    readonly property bool showFindButtons: webView.findInPageHasResult && findInPageActive
-    property alias bookmarked: secondaryBar.bookmarked
     readonly property alias toolsHeight: toolsRow.height
 
     readonly property int horizontalOffset: largeScreen ? Theme.paddingLarge : Theme.paddingSmall
@@ -50,36 +45,11 @@ Column {
                                                    WebUtils.cssPixelRatio) * WebUtils.cssPixelRatio
 
 
-    signal showSecondaryTools
     signal showInfoOverlay
     signal showChrome
-    signal closeActiveTab
     signal showCertDetail
 
-    // Used from SecondaryBar
-    signal enterNewTabUrl
-    signal findInPage
-    signal shareActivePage
-    signal bookmarkActivePage
-    signal removeActivePageFromBookmarks
-
-    function resetFind() {
-        webView.sendAsyncMessage("embedui:find", { text: "", backwards: false, again: false })
-        if (webView.contentItem) {
-            webView.contentItem.forceChrome(false)
-        }
-
-        findInPageActive = false
-    }
-
     width: parent.width
-
-    onFindInPageActiveChanged: {
-        // Down allow hiding of toolbar when finding text from the page.
-        if (findInPageActive && webView.contentItem) {
-            webView.contentItem.forceChrome(true)
-        }
-    }
 
     Item {
         id: certOverlay
@@ -119,17 +89,6 @@ Column {
         }
     }
 
-    SecondaryBar {
-        id: secondaryBar
-        visible: opacity > 0.0 || height > 0.0
-        opacity: secondaryToolsActive ? 1.0 : 0.0
-        height: secondaryToolsHeight
-        horizontalOffset: toolBarRow.horizontalOffset
-        iconWidth: toolBarRow.iconWidth
-
-        Behavior on opacity { FadeAnimation {} }
-    }
-
     Row {
         id: toolsRow
         width: parent.width
@@ -140,7 +99,7 @@ Column {
             id: backIcon
             expandedWidth: toolBarRow.iconWidth
             icon.source: "image://theme/icon-m-back"
-            active: webView.canGoBack && !toolBarRow.secondaryToolsActive && !findInPageActive
+            active: webView.canGoBack
             onTapped: webView.goBack()
         }
 
@@ -150,7 +109,6 @@ Column {
             property real glow
             expandedWidth: toolBarRow.smallIconWidth
             icon.source: danger ? "image://theme/icon-s-filled-warning" : "image://theme/icon-s-outline-secure"
-            active: webView.security && webView.security.validState && (!toolBarRow.secondaryToolsActive && !findInPageActive)
             icon.color: danger ? Qt.tint(Theme.primaryColor,
                                          Qt.rgba(Theme.errorColor.r, Theme.errorColor.g,
                                                  Theme.errorColor.b, glow))
@@ -171,9 +129,7 @@ Column {
                 securityAnimation.start()
             }
 
-            onDangerChanged: {
-                warn()
-            }
+            onDangerChanged: warn()
 
             Connections {
                 target: webView
@@ -185,78 +141,29 @@ Column {
             }
         }
 
-        MouseArea {
-            id: touchArea
+        Label {
+            anchors.verticalCenter: parent.verticalCenter
+            width: toolBarRow.width - (reloadButton.width + padlockIcon.width + backIcon.width + toolsRow.leftPadding) + Theme.paddingMedium
+            color: Theme.highlightColor
 
-            readonly property bool down: pressed && containsMouse
-
-            height: parent.height
-            width: toolBarRow.width - (reloadButton.width + padlockIcon.width + backIcon.width + toolsRow.leftPadding)
-            enabled: !showFindButtons
-
-            Label {
-                anchors.verticalCenter: parent.verticalCenter
-                width: parent.width + Theme.paddingMedium
-                color: touchArea.down ? Theme.highlightColor : Theme.primaryColor
-
-                text: {
-                    if (findInPageActive) {
-                        //: No text search results were found from the page.
-                        //% "No results"
-                        return qsTrId("sailfish_browser-la-no_results")
-                    } else if (url == "about:blank" || (webView.completed && webView.tabModel.count === 0 && !webView.tabModel.waitingForNewTab)) {
-                        //: Placeholder text for url typing and searching
-                        //% "Type URL or search"
-                        return qsTrId("sailfish_browser-ph-type_url_or_search")
-                    } else if (url) {
-                        return WebUtils.displayableUrl(url)
-                    } else {
-                        //: Loading text that is visible when url is not yet resolved.
-                        //% "Loading"
-                        return qsTrId("sailfish_browser-la-loading")
-                    }
-                }
-
-                truncationMode: TruncationMode.Fade
-
-                opacity: showFindButtons ? 0.0 : 1.0
-                Behavior on opacity { FadeAnimation {} }
-            }
-
-            Browser.ExpandingButton {
-                id: previousFindResult
-                active: showFindButtons
-                expandedWidth: toolBarRow.width / 2
-                icon {
-                    source: "image://theme/icon-m-left"
-                    anchors.horizontalCenterOffset: Theme.paddingLarge
-                }
-
-                onTapped: {
-                    webView.sendAsyncMessage("embedui:find", { text: findText, backwards: true, again: true })
+            text: {
+                if (url) {
+                    return WebUtils.displayableUrl(url)
+                } else {
+                    //: Loading text that is visible when url is not yet resolved.
+                    //% "Loading"
+                    return qsTrId("sailfish_browser-la-loading")
                 }
             }
 
-            Browser.ExpandingButton {
-                active: showFindButtons
-                expandedWidth: previousFindResult.width
-                anchors.left: previousFindResult.right
-                icon {
-                    source: "image://theme/icon-m-right"
-                    anchors.horizontalCenterOffset: -Theme.paddingLarge
-                }
-
-                onTapped: {
-                    webView.sendAsyncMessage("embedui:find", { text: findText, backwards: false, again: true })
-                }
-            }
+            truncationMode: TruncationMode.Fade
         }
 
         Browser.ExpandingButton {
             id: reloadButton
             expandedWidth: toolBarRow.iconWidth
             icon.source: webView.loading ? "image://theme/icon-m-reset" : "image://theme/icon-m-refresh"
-            active: webView.contentItem && !toolBarRow.secondaryToolsActive && !findInPageActive
+            active: webView.contentItem
             onTapped: {
                 if (webView.loading) {
                     webView.stop()
